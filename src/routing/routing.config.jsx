@@ -37,6 +37,18 @@ import ProductCreate from '../pages/cms/product/product.create'
 import ProductEdit from '../pages/cms/product/product.edit'
 import ProductList from '../pages/cms/product/product.list'
 
+import ProductDetailsPage from '../pages/home/product/product-detail.page'
+import ProductDetailLayout from '../pages/home/product/product-detail.layout'
+import ProductsPage from '../pages/home/product/products-page'
+
+import CartPage from '../pages/home/cart/cart-page'
+
+
+import UserLayout from '../pages/cms/user/user.layout'
+import UserList from '../pages/cms/user/user.list'
+import UserCreate from '../pages/cms/user/user.create'
+import UserEdit from '../pages/cms/user/user.edit'
+
 
 export default function Routing() {
   return (
@@ -59,12 +71,20 @@ export default function Routing() {
                     <Route path=":childCat" element={<CagetoryDetailPage/>}></Route>
                 </Route>
 
+
+                <Route path='products/' element={<ProductDetailLayout/>}>
+                    <Route index element={<ProductsPage/>}></Route>
+                    <Route path=':slug' element={<PermissionCheck Component={<ProductDetailsPage/>}  accessBy={['customer','admin']}/>} ></Route>
+                </Route>
+
+                <Route path='carts' element={<PermissionCheck Component={<CartPage/>} accessBy={['customer','admin']}/>}/>
+
                 <Route path='*' element={<Error404/>}/>
             </Route>
 
            
           {/* different view for admin pannel */}
-            <Route path='/admin' element={<PermissionCheck Component={<Layouts.CMSLayout/>} accessBy={"admin"} />}>
+            <Route path='/admin' element={<PermissionCheck Component={<Layouts.CMSLayout/>} accessBy={["admin"]} />}>
                 <Route index element={<AdminDashboard/>}></Route>
                 
                 <Route path="banner" element={<BannerLayout />}>
@@ -89,6 +109,13 @@ export default function Routing() {
                         <Route index element={<ProductList />}></Route>
                         <Route path="create" element={<ProductCreate/>}></Route>
                         <Route path=":id" element={<ProductEdit />}></Route>
+                    </Route>
+
+
+                    <Route path="user" element={<UserLayout />}>
+                        <Route index element={<UserList />}></Route>
+                        <Route path="create" element={<UserCreate/>}></Route>
+                        <Route path=":id" element={<UserEdit />}></Route>
                     </Route>
 
 

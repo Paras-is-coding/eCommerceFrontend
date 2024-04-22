@@ -49,7 +49,7 @@ export const H3= ({value}) => {
         {value}
     </h3>)
 }
-export const H4= ({value}) => {
+export const H4= ({value }) => {
     return (<h4>
         {value}
     </h4>)

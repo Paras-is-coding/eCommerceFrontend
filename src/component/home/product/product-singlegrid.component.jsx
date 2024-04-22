@@ -8,6 +8,9 @@ export default function ProductSingleGrid({product}) {
       <Col sm={6} md={4} lg={3}>
         <Card>
           <Card.Img
+          onError={(e)=>{
+            e.target.src="https://dummyimage.com/600x400/e3e0e3/a1a1a1&text=No+Image";
+          }}
             style={{ aspectRatio: "3/2", objectFit: "contain" }}
             className="mt-2"
             variant="top"
@@ -25,7 +28,7 @@ export default function ProductSingleGrid({product}) {
               }).format(product.afterDiscount)}
             </p>
             <NavLink
-              to={"/product/" + product.slug}
+              to={"/products/" + product.slug}
               className={"btn btn-sm btn-warning"}
             >
               View Details

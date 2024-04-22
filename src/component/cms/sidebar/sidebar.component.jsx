@@ -31,7 +31,7 @@ export default function SidebarComponent() {
                                     <div className="sb-nav-link-icon"><i className="fas fa-tachometer-alt"></i></div>
                                     Dashboard
                                 </NavLink>
-                                <NavLink className={"nav-link"} to="/home">
+                                <NavLink className={"nav-link"} to="/">
                                     <div className="sb-nav-link-icon"><i className="fas fa-home"></i></div>
                                     Home
                                 </NavLink>

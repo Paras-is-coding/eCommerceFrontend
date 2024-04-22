@@ -1,0 +1,9 @@
+ul.list-unstyled li a {
+    text-decoration: none; 
+    color: black; 
+  }
+  
+  ul.list-unstyled li a:hover {
+    color: #aaaaaa; 
+  }
+  

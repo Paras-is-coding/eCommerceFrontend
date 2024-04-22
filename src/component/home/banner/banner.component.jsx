@@ -34,7 +34,7 @@ export default function BannerComponent() {
 console.log(banner)
   return (
     <React.Fragment>
-      <Container className="mt-2">
+      <Container className="mt-2 bg">
         <Row>
           <Col sm={12}>
             <Slider autoplay  {...settings}>

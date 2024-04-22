@@ -36,6 +36,13 @@ export default function PermissionCheck({
           }
         },[])
 
+        const hasAccess = () => {
+          if (!user) return false;
+          if (!accessBy || !Array.isArray(accessBy)) return false;
+  
+          return accessBy.includes(user.role);
+      }
+
         
         if(loading){
           return(<>
@@ -47,7 +54,7 @@ export default function PermissionCheck({
             </Row>
           </Container>
           </>)
-        }else if(user?.role === accessBy){
+        }else if(hasAccess()){
           return Component
         }else{
           return<Navigate to={"/"+user.role}></Navigate>

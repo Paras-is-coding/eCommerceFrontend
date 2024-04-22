@@ -27,6 +27,7 @@ export const ImageUploader = ({loading=false,setThumb, setValue, setError }) => 
             disabled={loading}
             onChange={(e) => {
                 const image = e.target.files[0]
+                console.log(image)
                 const ext = (image.name.split(".")).pop();
                 if(['jpg','png','jpeg','gif','svg','bmp','webp'].includes(ext.toLowerCase())){
                     if(image.size <= 3000000){

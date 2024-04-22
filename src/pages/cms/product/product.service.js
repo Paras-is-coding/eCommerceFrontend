@@ -71,6 +71,16 @@ class ProductService extends HttpService {
             throw exception
         }
     }
+
+
+    getProductBySlug = async(slug) => {
+        try {
+            let result = await this.getRequest(`/v1/product/slug/${slug}`,{auth:true})
+            return result.data;
+        } catch(exception) {
+            throw exception;
+        }
+    }
 }
 
 const productSvc = new ProductService()

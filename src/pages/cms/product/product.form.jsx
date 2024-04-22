@@ -126,8 +126,8 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
         ),
       })
     )
-      .nullable()
-      .optional(),
+    .optional()
+    .nullable(),
     status: Yup.string().matches(/^(active|inactive)$/, {
       message: "Status can only be active or inactive",
     }),
@@ -203,10 +203,9 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
             formData.append(`attributes[${ind}][value][${index}]`,val)
         })
     })
-    data.images.map((img)=>{
+    data?.images?.map((img)=>{
         formData.append("images",img,img.filename)
     })
-
 
 
 
@@ -219,6 +218,7 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
     if (detail) {
       Object.keys(detail).map((field, ind) => {
         if (field !== "images") {
+          // console.log(detail)
           setValue(field, detail[field]);
         }
       });
@@ -263,7 +263,7 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
             {/* editor   */}
             <CKEditor
               editor={ClassicEditor}
-              data=""
+              data={detail?.description || ''}
               onChange={(event, editor) => {
                 const data = editor.getData();
                 setValue("description", data);
@@ -351,6 +351,7 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
                 </Button>
               </Col>
             </Row>
+            <ErrorMessage message={errors?.attributes?.message} />
           </Col>
         </Form.Group>
 
@@ -460,7 +461,7 @@ const ProductForm = ({ submitEvent, loading = false, detail = null }) => {
               setValue={setValue}
               setError={setError}
             />
-            <ErrorMessage message={errors?.image?.message} />
+            <ErrorMessage message={errors?.images?.message} />
           </Col>
           <Col sm={6}>
             <Row>
