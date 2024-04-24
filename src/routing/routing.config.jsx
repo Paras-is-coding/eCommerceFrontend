@@ -48,6 +48,7 @@ import UserLayout from '../pages/cms/user/user.layout'
 import UserList from '../pages/cms/user/user.list'
 import UserCreate from '../pages/cms/user/user.create'
 import UserEdit from '../pages/cms/user/user.edit'
+import SearchResultPage from '../pages/home/search/search-result-page'
 
 
 export default function Routing() {
@@ -78,6 +79,8 @@ export default function Routing() {
                 </Route>
 
                 <Route path='carts' element={<PermissionCheck Component={<CartPage/>} accessBy={['customer','admin']}/>}/>
+
+                <Route path='/search' element={<SearchResultPage/>} />
 
                 <Route path='*' element={<Error404/>}/>
             </Route>

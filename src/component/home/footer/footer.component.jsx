@@ -7,25 +7,25 @@ import './Footer.css'
 
 const Footer = () => {
   return (
-    <footer className="bg-light text-darka py-4">
+    <footer className="bg-light text-muted py-4">
       <Container>
         <Row>
           <Col md={3} sm={6}>
             <h5>Company</h5>
             <ul className="list-unstyled">
-              <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/contact">Contact Us</Link></li>
-              <li><Link to="/careers">Careers</Link></li>
-              <li><Link to="/press">Press</Link></li>
+              <li><Link to="/">About Us</Link></li>
+              <li><Link to="/">Contact Us</Link></li>
+              <li><Link to="/">Careers</Link></li>
+              <li><Link to="/">Press</Link></li>
             </ul>
           </Col>
           <Col md={3} sm={6}>
             <h5>Products</h5>
             <ul className="list-unstyled">
               <li><Link to="category/electronics">Electronics</Link></li>
-              <li><Link to="category/clothing">Clothing</Link></li>
               <li><Link to="category/accessories">Accessories</Link></li>
-              <li><Link to="category/home-goods">Home Goods</Link></li>
+              <li><Link to="category/men's-fashion">Men's Fashion</Link></li>
+              <li><Link to="category/womens">Womens</Link></li>
             </ul>
           </Col>
           <Col md={3} sm={6}>

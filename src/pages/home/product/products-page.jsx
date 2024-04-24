@@ -11,9 +11,8 @@ export default function ProductsPage() {
 
   const getProductsForHome = useCallback(async () => {
     try {
-      let response = await productSvc.getProductForHome();
+      let response = await productSvc.getProductForHome({});
       setProducts(response.data.result);
-      console.log(response.data.result)
     } catch (error) {
       toast.error("Error fetching products!");
     } finally {

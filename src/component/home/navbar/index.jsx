@@ -18,7 +18,8 @@ import { Image } from "react-bootstrap";
 function NavBar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [categs, setCategs] = useState();
-  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const getCategsList = useCallback(async () => {
     try {
@@ -61,6 +62,11 @@ function NavBar() {
   
 }
 
+const handleSearch = (e) => {
+  e.preventDefault();
+  navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+};
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme={theme}>
       <Container fluid>
@@ -94,12 +100,14 @@ function NavBar() {
                 ))}
             </NavDropdown>
           </Nav>
-          <Form className="d-flex">
+          <Form className="d-flex" onSubmit={handleSearch}>
             <Form.Control
               type="search"
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <Button variant="outline-success">Search</Button>
           </Form>

@@ -2,7 +2,14 @@ import React from "react";
 import { Card, Col } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
+const MAX_SUMMARY_LENGTH = 10;
+
 export default function ProductSingleGrid({product}) {
+  const truncatedSummary =
+  product.summary.length > MAX_SUMMARY_LENGTH
+    ? product.summary.slice(0, MAX_SUMMARY_LENGTH) + "... view details"
+    : product.summary;
+
   return (
     <>
       <Col sm={6} md={4} lg={3}>
@@ -20,7 +27,7 @@ export default function ProductSingleGrid({product}) {
           />
           <Card.Body as={"div"}>
             <Card.Title>{product.title}</Card.Title>
-            <Card.Text>{product.summary}</Card.Text>
+            <Card.Text>{truncatedSummary}</Card.Text>
             <p>
               {new Intl.NumberFormat("en-np", {
                 style: "currency",

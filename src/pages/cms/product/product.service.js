@@ -13,6 +13,15 @@ class ProductService extends HttpService {
         }
     }
 
+    getProductForHome = async({page=1,limit=10,search="",category="",brand="",sort=""}) => {
+        try {
+            let result = await this.getRequest('/v1/product/home?page='+page+'&limit='+limit+'&search='+search+'&category='+category+'&brand='+brand+'&sort='+sort)
+            return result;
+        } catch(exception) {
+            throw exception
+        }
+    }
+
     storeProduct = async(data) => {
         try {
             let response = await this.postRequest(
@@ -63,14 +72,7 @@ class ProductService extends HttpService {
         }
     }
 
-    getProductForHome = async() => {
-        try {
-            let result = await this.getRequest("/v1/product/home")
-            return result;
-        } catch(exception) {
-            throw exception
-        }
-    }
+   
 
 
     getProductBySlug = async(slug) => {

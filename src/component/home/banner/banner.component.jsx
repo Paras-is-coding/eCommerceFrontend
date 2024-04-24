@@ -31,7 +31,7 @@ export default function BannerComponent() {
   useEffect(()=>{
     getListOfHomeBanners();
   },[]);
-console.log(banner)
+// console.log(banner)
   return (
     <React.Fragment>
       <Container className="mt-2 bg">
