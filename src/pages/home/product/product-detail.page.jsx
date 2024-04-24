@@ -10,17 +10,30 @@ import {
   Carousel,
   Spinner,
 } from "react-bootstrap";
-import { FaPlus, FaMinus, FaStar } from "react-icons/fa";
+import { FaPlus, FaMinus, FaStar, FaEdit } from "react-icons/fa";
 import productSvc from "../../cms/product/product.service";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import cartSvc from "./cartService";
+import EditReviewForm from "../../../component/home/product/edit-review-component";
 
 const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [userReview, setUserReview] = useState(null);
+  const [reviewText, setReviewText] = useState("");
+  const [rating, setRating] = useState(5);
+  const navigate = useNavigate();
+
+  const [editMode, setEditMode] = useState(false);
+
+  // Function to toggle edit mode
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  };
 
   const { slug } = useParams();
 
@@ -30,6 +43,29 @@ const ProductDetailsPage = () => {
         const productData = await productSvc.getProductBySlug(slug);
         console.log(productData);
         setProduct(productData.result.product[0]);
+
+        const productReviews = await productSvc.getAllReviews(
+          productData.result.product[0]._id
+        );
+        setReviews(productReviews.data.reviews);
+
+        // Calculate average rating
+        const totalRating = productReviews.data.reviews.reduce(
+          (acc, review) => acc + review.rate,
+          0
+        );
+        const avgRating =
+          productReviews.data.reviews.length > 0
+            ? totalRating / productReviews.data.reviews.length
+            : 0;
+        setAverageRating(avgRating);
+
+        // Check if the logged-in user has already reviewed the product
+        const loggedInUser = JSON.parse(localStorage.getItem("_user"));
+        const userReview = productReviews.data.reviews.find(
+          (review) => review.reviewerId === loggedInUser.userId
+        );
+        setUserReview(userReview);
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -55,23 +91,95 @@ const ProductDetailsPage = () => {
 
       // Success
       Swal.fire({
-        title: 'Item added to cart!',
-        text: 'Do you want to view your cart?',
-        icon: 'success',
+        title: "Item added to cart!",
+        text: "Do you want to view your cart?",
+        icon: "success",
         showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/carts'); // Navigate to cart page
+          navigate("/carts"); // Navigate to cart page
         }
       });
-
     } catch (error) {
       console.error("Error adding to cart:", error);
-      // Handle error: show error message to the user
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReviewTextChange = (e) => {
+    setReviewText(e.target.value);
+  };
+
+  const handleRatingChange = (newRating) => {
+    setRating(newRating);
+  };
+
+  const submitReview = async () => {
+    try {
+      await productSvc.createReview({
+        productId: product._id,
+        reviewData:{
+          review: reviewText,
+          rate: rating
+        }
+       
+      });
+
+      // Refresh reviews after adding a new review
+      const productReviews = await productSvc.getAllReviews(product._id);
+      setReviews(productReviews.data.reviews);
+
+      // Reset review text and rating
+      setReviewText("");
+      setRating(5); // Reset rating to default value
+
+      // Success message
+      Swal.fire({
+        icon: "success",
+        title: "Review submitted successfully!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
+  };
+
+  // Function to handle edit review submission
+  const handleEditReviewSubmit = async (editedReviewText, editedRating) => {
+    try {
+      console.log(editedReviewText)
+      console.log(editedRating)
+      console.log(product._id)
+      console.log(userReview._id)
+      await productSvc.updateReview({
+        productId: product._id,
+        reviewId: userReview._id,
+        reviewData: {
+          review: editedReviewText,
+          rate: editedRating,
+        },
+      });
+
+      // Refresh reviews after editing
+      const productReviews = await productSvc.getAllReviews(product._id);
+      setReviews(productReviews.data.reviews);
+
+      // Close edit mode after successful edit
+      setEditMode(false);
+
+      // Success message
+      Swal.fire({
+        icon: "success",
+        title: "Review updated successfully!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.error("Error updating review:", error);
     }
   };
 
@@ -107,7 +215,7 @@ const ProductDetailsPage = () => {
                         <FaStar
                           key={index}
                           color={
-                            index < Math.floor(product.rating)
+                            index < Math.floor(averageRating)
                               ? "#ffc107"
                               : "#e4e5e9"
                           }
@@ -115,8 +223,7 @@ const ProductDetailsPage = () => {
                       ))}
                     </div>
                     <span className="ms-2 text-muted">
-                      <span className="me-1">{product.rating}</span>
-                      <span>ratings</span>
+                      <span>{reviews.length+ " "}{reviews.length === 1?"review":"reviews"}</span>
                     </span>
                   </div>
                   <div className="h3">
@@ -126,7 +233,9 @@ const ProductDetailsPage = () => {
                     }).format(product.afterDiscount)}
                   </div>
                   <Card.Text
-                    dangerouslySetInnerHTML={{ __html: product.description }}
+                    dangerouslySetInnerHTML={{
+                      __html: product.description,
+                    }}
                   />
                   <div className="d-flex align-items-center gap-5 ">
                     <span className="text-muted">Quantity</span>
@@ -172,8 +281,79 @@ const ProductDetailsPage = () => {
               <Card>
                 <Card.Body>
                   <Card.Title>Customer Reviews</Card.Title>
-                  <Card.Text>No reviews available yet.</Card.Text>
-                  {/* You can fetch and display reviews here */}
+                  {/* Show review form if the user hasn't reviewed yet */}
+                  {!userReview && (
+                    <Form.Group className="mb-3">
+                      <Form.Label>Add Your Review</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={reviewText}
+                        onChange={handleReviewTextChange}
+                      />
+                      <div className="my-4">
+                        <span className="me-2">Rate this product:</span>
+                        {[...Array(5)].map((_, index) => (
+                          <FaStar
+                            key={index}
+                            color={index < rating ? "#ffc107" : "#e4e5e9"}
+                            className="cursor-pointer"
+                            onClick={() => handleRatingChange(index + 1)}
+                          />
+                        ))}
+                      </div>
+                      <Button
+                        variant="primary"
+                        className="mt-3"
+                        onClick={submitReview}
+                      >
+                        Submit Review
+                      </Button>
+                    </Form.Group>
+                  )}
+
+                  {/* Iterate over reviews */}
+                  {reviews && reviews.length > 0 ? (
+                    reviews.map((review, index) => (
+                      <div key={index}>
+                        {/* Display review */}
+                        <p>{review.review}</p>
+                        {/* Display rating */}
+                        <div>
+                          {[...Array(5)].map((_, index) => (
+                            <FaStar
+                              key={index}
+                              color={
+                                index < Math.floor(review.rate)
+                                  ? "#ffc107"
+                                  : "#e4e5e9"
+                              }
+                            />
+                          ))}
+                        </div>
+                        {/* Show edit option if the review is by logged-in user */}
+                        {userReview && userReview._id === review._id && (
+                          <Button
+                            variant="link"
+                            className="text-primary"
+                            onClick={toggleEditMode}
+                          >
+                            <FaEdit /> Edit Review
+                          </Button>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p>No reviews available yet.</p>
+                  )}
+
+                  {editMode && (
+                    <EditReviewForm
+                      defaultReview={userReview.review}
+                      defaultRate={userReview.rate}
+                      onSubmit={handleEditReviewSubmit}
+                    />
+                  )}
                 </Card.Body>
               </Card>
             </Col>

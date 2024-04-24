@@ -83,6 +83,50 @@ class ProductService extends HttpService {
             throw exception;
         }
     }
+
+
+
+
+    createReview = async ({productId, reviewData}) => {
+        try {
+            const response = await this.postRequest(
+                `/v1/product/review/${productId}`,
+                reviewData,
+                { auth: true }
+            );
+            return response;
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
+    updateReview = async ({productId, reviewId, reviewData}) => {
+        try {
+            const response = await this.putRequest(
+                `/v1/product/${productId}/review/${reviewId}`,
+                reviewData,
+                { auth: true }
+            );
+            return response;
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
+    getAllReviews = async (productId) => {
+        try {
+            const response = await this.getRequest(
+                `/v1/product/reviews/${productId}`,
+                { auth: true }
+            );
+            return response;
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
+    
+
 }
 
 const productSvc = new ProductService()
